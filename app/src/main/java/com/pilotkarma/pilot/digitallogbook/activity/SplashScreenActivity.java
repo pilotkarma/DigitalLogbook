@@ -9,9 +9,6 @@ import android.widget.ImageView;
 
 import com.pilotkarma.pilot.digitallogbook.R;
 
-/**
- * Created by vsivajothy on 9/12/15.
- */
 public class SplashScreenActivity extends Activity {
 
     @Override
