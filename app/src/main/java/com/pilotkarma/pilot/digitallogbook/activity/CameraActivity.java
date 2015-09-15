@@ -3,16 +3,17 @@ package com.pilotkarma.pilot.digitallogbook.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.pilotkarma.pilot.digitallogbook.R;
+import com.pilotkarma.pilot.digitallogbook.view.CameraPreview;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,15 +26,17 @@ import java.util.Date;
  */
 public class CameraActivity extends Activity {
     private Context context;
-    private boolean cameraFront;
+    private boolean cameraFront =false;
     private Camera camera;
-    private SurfaceView preview;
+    private CameraPreview preview;
     private Camera.PictureCallback mPicture;
     private Button capture, switchCamera;
-    private Context myContext;
     private LinearLayout cameraPreview;
 
-
+    /**
+     *
+     * @return
+     */
     private int findFrontFacingCamera(){
         int cameraId = -1;
         int numberOfCamera = Camera.getNumberOfCameras();
@@ -50,6 +53,10 @@ public class CameraActivity extends Activity {
 
     }
 
+    /**
+     *
+     * @return
+     */
     private int findBackFacingCamera(){
         int cameraId = -1;
 
@@ -66,6 +73,9 @@ public class CameraActivity extends Activity {
         return cameraId;
     }
 
+    /**
+     *
+     */
     private void releaseCamera() {
 
         if (camera!=null) {
@@ -74,6 +84,11 @@ public class CameraActivity extends Activity {
         }
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     private boolean hasCamera(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             return true;
@@ -82,18 +97,17 @@ public class CameraActivity extends Activity {
         }
     }
 
+    /**
+     *
+     */
     private void chooseCamera() {
         //if the camera preview is the front
         if (cameraFront) {
             int cameraId = findBackFacingCamera();
             if (cameraId >= 0) {
-                //open the backFacingCamera
-                //set a picture callback
-                //refresh the preview
-
                 camera = Camera.open(cameraId);
-                //mPicture = getPictureCallback();
-               // mPreview.refreshCamera(mCamera);
+                mPicture = getPictureCallback();
+                preview.refreshCamera(camera);
             }
         } else {
             int cameraId = findFrontFacingCamera();
@@ -103,12 +117,16 @@ public class CameraActivity extends Activity {
                 //refresh the preview
 
                 camera = Camera.open(cameraId);
-               // mPicture = getPictureCallback();
-                //mPreview.refreshCamera(mCamera);
+                mPicture = getPictureCallback();
+                preview.refreshCamera(camera);
             }
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private static File getOutMediaFile(){
         File mediaStorage = new File("/sdcard/", "DigitalLogCamera");
         if (!mediaStorage.exists()) {
@@ -121,7 +139,10 @@ public class CameraActivity extends Activity {
         return mediaFile;
     }
 
-
+    /**
+     *
+     * @return
+     */
     private Camera.PictureCallback getPictureCallback(){
         Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
             @Override
@@ -140,20 +161,38 @@ public class CameraActivity extends Activity {
 
                 } catch (Exception ex) {
                 }
-                //preview.refreCamera()
+                preview.refreshCamera(camera);
             }
         };
         return mPicture;
     }
 
+    /**
+     *
+     */
+    DialogInterface.OnClickListener captureListner = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            camera.takePicture(null,null,mPicture);
+        }
+    };
+
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_module);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         context =this;
+        //initialize();
     }
 
+    /**
+     *
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -162,14 +201,21 @@ public class CameraActivity extends Activity {
             finish();
         }
         if (camera==null) {
-            if (findFrontFacingCamera() == 1) {
+            if (findFrontFacingCamera() < 0 ) {
                 releaseCamera();
                 chooseCamera();
             } else {
                 Toast.makeText(context, "Sorry Buddy you have only one Camera",Toast.LENGTH_LONG).show();
             }
-
         }
+    }
 
+    /**
+     *
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseCamera();
     }
 }

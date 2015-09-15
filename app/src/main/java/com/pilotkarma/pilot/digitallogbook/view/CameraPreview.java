@@ -21,7 +21,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public CameraPreview(Context context, Camera camera) {
         super(context);
         this.camera = camera;
-        getHolder();
+        this.surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
@@ -31,7 +31,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
         try {
-            camera.startPreview();
+            camera.stopPreview();
         }catch (Exception ex){
 
         }

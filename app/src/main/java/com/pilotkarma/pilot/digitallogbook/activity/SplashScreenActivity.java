@@ -34,7 +34,7 @@ public class SplashScreenActivity extends Activity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 finish();
-                Intent i = new Intent(getBaseContext(),MainActivity.class);
+                Intent i = new Intent(getBaseContext(),CameraActivity.class);
                 startActivity(i);
             }
 
