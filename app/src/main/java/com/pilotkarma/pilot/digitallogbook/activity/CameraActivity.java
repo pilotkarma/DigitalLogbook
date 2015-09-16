@@ -26,25 +26,48 @@ import java.util.Date;
  */
 public class CameraActivity extends Activity {
     private Context context;
-    private boolean cameraFront =false;
+    private boolean cameraFront = false;
     private Camera camera;
     private CameraPreview preview;
     private Camera.PictureCallback mPicture;
+    /**
+     *
+     */
+    DialogInterface.OnClickListener captureListner = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            camera.takePicture(null, null, mPicture);
+        }
+    };
     private Button capture, switchCamera;
     private LinearLayout cameraPreview;
 
     /**
-     *
      * @return
      */
-    private int findFrontFacingCamera(){
+    private static File getOutMediaFile() {
+        File mediaStorage = new File("/sdcard/", "DigitalLogCamera");
+        if (!mediaStorage.exists()) {
+            if (!mediaStorage.mkdir()) {
+                return null;
+            }
+        }
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile = new File(mediaStorage.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+        return mediaFile;
+    }
+
+    /**
+     * @return
+     */
+    private int findFrontFacingCamera() {
         int cameraId = -1;
         int numberOfCamera = Camera.getNumberOfCameras();
-        for (int i=0; i<numberOfCamera; i++){
+        for (int i = 0; i < numberOfCamera; i++) {
             Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i,info);
+            Camera.getCameraInfo(i, info);
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                cameraId =i;
+                cameraId = i;
                 cameraFront = true;
                 break;
             }
@@ -54,17 +77,16 @@ public class CameraActivity extends Activity {
     }
 
     /**
-     *
      * @return
      */
-    private int findBackFacingCamera(){
+    private int findBackFacingCamera() {
         int cameraId = -1;
 
         int numberOfCamera = Camera.getNumberOfCameras();
-        for (int i=0;i <numberOfCamera;i++){
+        for (int i = 0; i < numberOfCamera; i++) {
             Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i,info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK){
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 cameraId = i;
                 cameraFront = false;
                 break;
@@ -78,14 +100,13 @@ public class CameraActivity extends Activity {
      */
     private void releaseCamera() {
 
-        if (camera!=null) {
+        if (camera != null) {
             camera.release();
-            camera =null;
+            camera = null;
         }
     }
 
     /**
-     *
      * @param context
      * @return
      */
@@ -124,35 +145,18 @@ public class CameraActivity extends Activity {
     }
 
     /**
-     *
      * @return
      */
-    private static File getOutMediaFile(){
-        File mediaStorage = new File("/sdcard/", "DigitalLogCamera");
-        if (!mediaStorage.exists()) {
-            if (!mediaStorage.mkdir()) {
-                return null;
-            }
-        }
-        String timeStamp =  new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile = new File(mediaStorage.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
-        return mediaFile;
-    }
-
-    /**
-     *
-     * @return
-     */
-    private Camera.PictureCallback getPictureCallback(){
+    private Camera.PictureCallback getPictureCallback() {
         Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
                 File file = getOutMediaFile();
-                if (file!=null) {
+                if (file != null) {
                     return;
                 }
                 try {
-                    FileOutputStream fileOutputStream =  new FileOutputStream(file);
+                    FileOutputStream fileOutputStream = new FileOutputStream(file);
                     fileOutputStream.write(data);
                     fileOutputStream.close();
                     Toast.makeText(context, "Picture saved: " + file.getName(), Toast.LENGTH_LONG).show();
@@ -168,17 +172,6 @@ public class CameraActivity extends Activity {
     }
 
     /**
-     *
-     */
-    DialogInterface.OnClickListener captureListner = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            camera.takePicture(null,null,mPicture);
-        }
-    };
-
-    /**
-     *
      * @param savedInstanceState
      */
     @Override
@@ -186,7 +179,7 @@ public class CameraActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_module);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        context =this;
+        context = this;
         //initialize();
     }
 
@@ -197,15 +190,15 @@ public class CameraActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if (!hasCamera(context)) {
-            Toast.makeText(context,"Sorry no camera right now",Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Sorry no camera right now", Toast.LENGTH_LONG).show();
             finish();
         }
-        if (camera==null) {
-            if (findFrontFacingCamera() < 0 ) {
+        if (camera == null) {
+            if (findFrontFacingCamera() < 0) {
                 releaseCamera();
                 chooseCamera();
             } else {
-                Toast.makeText(context, "Sorry Buddy you have only one Camera",Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Sorry Buddy you have only one Camera", Toast.LENGTH_LONG).show();
             }
         }
     }

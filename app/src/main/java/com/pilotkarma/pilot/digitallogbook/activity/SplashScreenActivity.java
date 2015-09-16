@@ -16,8 +16,8 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
 
-        final ImageView propplerIV = (ImageView)findViewById(R.id.propplerImageview);
-        final Animation propplerAnimation = AnimationUtils.loadAnimation(getBaseContext(),R.anim.proppler_animation);
+        final ImageView propplerIV = (ImageView) findViewById(R.id.propplerImageview);
+        final Animation propplerAnimation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.proppler_animation);
 
         propplerIV.startAnimation(propplerAnimation);
         propplerAnimation.setRepeatCount(10);
@@ -31,7 +31,7 @@ public class SplashScreenActivity extends Activity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 finish();
-                Intent i = new Intent(getBaseContext(),CameraActivity.class);
+                Intent i = new Intent(getBaseContext(), CameraActivity.class);
                 startActivity(i);
             }
 
@@ -40,8 +40,6 @@ public class SplashScreenActivity extends Activity {
 
             }
         });
-
-
 
 
     }

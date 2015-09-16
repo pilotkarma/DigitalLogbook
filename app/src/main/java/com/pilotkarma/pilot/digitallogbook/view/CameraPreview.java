@@ -3,7 +3,6 @@ package com.pilotkarma.pilot.digitallogbook.view;
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -32,21 +31,21 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
         try {
             camera.stopPreview();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         setCamera(camera);
         try {
             camera.setPreviewDisplay(surfaceHolder);
             camera.startPreview();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.d(VIEW_LOG_TAG, "Error starting Camera prevview: " + ex.getMessage());
         }
     }
 
 
     private void setCamera(Camera camera) {
-        this.camera=camera;
+        this.camera = camera;
     }
 
 
