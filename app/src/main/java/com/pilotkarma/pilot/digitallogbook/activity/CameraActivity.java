@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -53,8 +54,7 @@ public class CameraActivity extends Activity {
             }
         }
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile = new File(mediaStorage.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
-        return mediaFile;
+        return new File(mediaStorage.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
     }
 
     /**
@@ -161,9 +161,9 @@ public class CameraActivity extends Activity {
                     fileOutputStream.close();
                     Toast.makeText(context, "Picture saved: " + file.getName(), Toast.LENGTH_LONG).show();
 
-                } catch (FileNotFoundException ex) {
-
-                } catch (Exception ex) {
+                }
+                catch (Exception ex) {
+                    System.out.println(ex.getMessage());
                 }
                 preview.refreshCamera(camera);
             }
@@ -180,6 +180,15 @@ public class CameraActivity extends Activity {
         setContentView(R.layout.camera_module);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         context = this;
+
+//        switchCamera = (Button) findViewById(R.id.button_ChangeCamera);
+//        switchCamera.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+
         //initialize();
     }
 
@@ -193,6 +202,7 @@ public class CameraActivity extends Activity {
             Toast.makeText(context, "Sorry no camera right now", Toast.LENGTH_LONG).show();
             finish();
         }
+
         if (camera == null) {
             if (findFrontFacingCamera() < 0) {
                 releaseCamera();
@@ -200,6 +210,9 @@ public class CameraActivity extends Activity {
             } else {
                 Toast.makeText(context, "Sorry Buddy you have only one Camera", Toast.LENGTH_LONG).show();
             }
+            camera = Camera.open(findBackFacingCamera());
+            mPicture = getPictureCallback();
+            preview.refreshCamera(camera);
         }
     }
 

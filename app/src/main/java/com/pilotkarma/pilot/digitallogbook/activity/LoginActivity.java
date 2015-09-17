@@ -13,8 +13,8 @@ import com.pilotkarma.pilot.digitallogbook.R;
  * Created by vsivajothy on 9/15/15.
  */
 public class LoginActivity extends Activity {
-    Button b1, b2;
-    EditText ed1, ed2;
+    private Button b1, b2;
+    private EditText ed1, ed2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

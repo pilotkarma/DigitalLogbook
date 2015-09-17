@@ -22,5 +22,5 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/proppleronly"></ImageView>
+        android:src="@drawable/proppleronly"/>
 </RelativeLayout>
